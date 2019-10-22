@@ -1,0 +1,50 @@
+{
+  "name": "loach",
+  "version": "1.0.0",
+  "description": "A Mobile Vue UIKit",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --config build/webpack.example.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Droid43/loach.git"
+  },
+  "keywords": [
+    "vue",
+    "mobile",
+    "ui"
+  ],
+  "author": "Droid43",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Droid43/loach/issues"
+  },
+  "homepage": "https://github.com/Droid43/loach#readme",
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.6.0",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/preset-typescript": "^7.6.0",
+    "autoprefixer": "^9.6.5",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
+    "postcss": "^7.0.18",
+    "postcss-loader": "^3.0.0",
+    "style-loader": "^1.0.0",
+    "typescript": "^3.6.4",
+    "vue": "^2.6.10",
+    "vue-class-component": "^7.1.0",
+    "vue-loader": "^15.7.1",
+    "vue-router": "^3.1.3",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.2",
+    "webpack-merge": "^4.2.2"
+  }
+}
