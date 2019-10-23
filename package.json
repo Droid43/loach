@@ -4,7 +4,8 @@
   "description": "A Mobile Vue UIKit",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --config build/webpack.example.js"
+    "dev": "npm run build:routes && webpack-dev-server --config build/webpack.example.js",
+    "build:routes": "node build/utils/demo-routes.js"
   },
   "repository": {
     "type": "git",

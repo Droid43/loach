@@ -7,7 +7,7 @@ module.exports = merge(config, {
 	entry    : './example/src/index.ts',
 	devtool  : 'cheap-module-eval-source-map',
 	devServer: {
-		open: true,
+		// open: true,
 		progress: true,
 		host    : '0.0.0.0',
 		stats   : 'errors-only',

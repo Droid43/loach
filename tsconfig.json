@@ -17,7 +17,7 @@
     "suppressImplicitAnyIndexErrors": true
   },
   "include": [
-    "src/**/*", "example/**/*"
+    "./**/*"
   ],
   "compileOnSave": false
 }
