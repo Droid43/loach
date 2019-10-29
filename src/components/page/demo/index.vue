@@ -1,7 +1,7 @@
 <!--name-->
 <template>
 	<div>
-		
+		<l-page></l-page>
 	</div>
 </template>
 

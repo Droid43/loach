@@ -1,7 +1,7 @@
 <!--name-->
 <template>
 	<div>
-		<l-button></l-button>
+
 	</div>
 </template>
 
@@ -10,7 +10,6 @@
 </style>
 
 <script>
-	import LButton from '../index.ts'
 	export default {
 		props     : {},
 		data() {
@@ -18,10 +17,11 @@
 				title: '',
 			};
 		},
-		components: {LButton},
+		components: {},
 		computed  : {},
 		methods   : {
 			init() {
+
 			},
 		},
 		mounted() {
