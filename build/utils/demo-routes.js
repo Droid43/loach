@@ -13,18 +13,29 @@ function getComponentNames() {
 	});
 }
 
+function getCamelName(name) {
+	let itemList = name.split('-');
+	let newName = '';
+	itemList.forEach( value => {
+		newName += value.charAt(0).toUpperCase() + value.substr(1);
+	});
+	return newName;
+}
+
 function createRouterFile(){
 	const componentNames = getComponentNames();
 	let routerList = '\nlet routers = [\n';
 	let importComponents = '';
 	componentNames.sort()
 		.map(name => {
+			let componentName = getCamelName(name);
+			let routerName = componentName.charAt(0).toLowerCase() + componentName.substr(1);
 		routerList += `\t{
-\t\tname: "${name}",
-\t\tpath: "/${name}",
-\t\tcomponent: ${name},
+\t\tname: "${routerName}",
+\t\tpath: "/${routerName}",
+\t\tcomponent: ${componentName},
 \t},`;
-		importComponents += `import ${name} from 'src/components/${name}/demo/index.vue'\n`;
+		importComponents += `import ${componentName} from 'src/components/${name}/demo/index.vue'\n`;
 	});
 	routerList += '\n];\n';
 
