@@ -1,0 +1,21 @@
+
+@import "../../style/index";
+.loach-nav-bar-left{
+	padding: 0 @loach-app-blood-edge;
+	flex-shrink: 1;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	&-back-arrow{
+		--back-arrow-radius: 6px;
+		--back-arrow-width: 2.5px;
+		width: calc(2 * var(--back-arrow-radius));
+		height: calc(2 * var(--back-arrow-radius));
+		margin-top: calc(0.207 * var(--back-arrow-radius));
+		padding-left: calc(0.207 * var(--back-arrow-radius));
+		border-top: var(--back-arrow-width) solid @load-nav-text-normal-color;
+		border-left: var(--back-arrow-width) solid @load-nav-text-normal-color;
+		border-radius: calc(0.5 * var(--back-arrow-width));
+		transform: rotateZ(-45deg);
+	}
+}
