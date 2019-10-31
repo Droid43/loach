@@ -1,0 +1,20 @@
+// 单行文本超出显示省略号
+.loach-no-wrap() {
+	-ms-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	max-lines: 1;
+}
+
+// 多行文本超出显示省略号
+.loach-no-wrap-multi(@n) {
+	display: -webkit-box !important;
+	-ms-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	word-break: break-all;
+	-webkit-box-orient: vertical;
+	-webkit-box-align: start;
+	-webkit-line-clamp: @n; // 可显示行数
+}
