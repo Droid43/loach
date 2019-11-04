@@ -1,7 +1,11 @@
 <!--name-->
 <template>
 	<div>
-		<l-page></l-page>
+		<l-page title="Page Demo">
+			<div v-for="item in 100">
+				hello
+			</div>
+		</l-page>
 	</div>
 </template>
 

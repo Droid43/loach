@@ -1,17 +1,17 @@
 <template>
-	<div id="app">
-		<keep-alive>
-			<router-view/>
-		</keep-alive>
-	</div>
+	<l-app id="app" :config="getAppConfig()"/>
 </template>
 
+<style lang="less">
+	@import "../../src/components/index";
+</style>
 <script>
-
+	import routes from './routes';
 	export default {
 		name    : 'App',
 		data() {
-			return {};
+			return {
+			};
 		},
 		computed: {},
 		watch   : {},
@@ -19,6 +19,15 @@
 			this.init();
 		},
 		methods : {
+			getAppConfig(){
+				return {
+					routes:routes,
+					currentPage: {
+						name: '/',
+						param: {}
+					}
+				}
+			},
 			init() {
 			},
 		},
@@ -26,18 +35,3 @@
 		},
 	};
 </script>
-
-<style lang="less" scoped>
-	#app {
-		position   : absolute;
-		top        : 0;
-		left       : 0;
-		right        : 0;
-		bottom       : 0;
-		overflow-y : hidden;
-	}
-</style>
-
-<style lang="less">
-	@import "../../src/components/index";
-</style>

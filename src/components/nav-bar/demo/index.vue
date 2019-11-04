@@ -13,7 +13,6 @@
 
 <script>
 	import LNavBar from '../index.ts'
-	import LTouch from '../../../utils/LTouch'
 	export default {
 		props     : {},
 		data() {
@@ -27,7 +26,6 @@
 		computed  : {},
 		methods   : {
 			init() {
-				LTouch.getInstance();
 			},
 		},
 		mounted() {

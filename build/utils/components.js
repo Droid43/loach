@@ -51,7 +51,9 @@ function createIndexFile(){
 				styleContent += `@import './${name}/index';\n`
 			}
 		});
-	let fileContent = `import { VueConstructor } from 'vue/types';\n${importComponents
+	let fileContent = `import { VueConstructor } from 'vue/types';\n${
+		"import {LApp} from '../utils/LApp';\n"
+		}${importComponents
 		}\nconst components = {\n${componentStr
 	}};\nconst install = (Vue: VueConstructor) => {
   Object.keys(components).forEach(key => {
@@ -59,7 +61,7 @@ function createIndexFile(){
   });
 };
 export default {
-${componentStr}\tinstall
+${componentStr}\tinstall,\n\tLApp
 };`;
 
 	// console.log(fileContent);
