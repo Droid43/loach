@@ -5,16 +5,11 @@ import Loach from '../../src/components'
 import App from './App';
 import routes from './routes';
 // @ts-ignore
-import home from './pages/Home'
 
 Vue
     // .use(Router)
     .use(Loach);
-routes.unshift({
-    name: 'home',
-    path: '/',
-    component: home
-});
+
 // const router = new Router({
 //     routes: routes
 // });

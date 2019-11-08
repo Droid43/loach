@@ -1,10 +1,30 @@
-body{
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	padding: 0;
-	margin: 0;
+@import "variable";
+body {
+	position    : absolute;
+	top         : 0;
+	left        : 0;
+	right       : 0;
+	bottom      : 0;
+	padding     : 0;
+	margin      : 0;
 	font-family : "PingFang SC", sans-serif;
+}
+
+* {
+	-webkit-tap-highlight-color : rgba(0, 0, 0, 0);
+	user-select                 : none;
+	-webkit-touch-callout       : none;
+	box-sizing                  : border-box;
+}
+
+.loach-need-click {
+}
+.loach-active-state {
+	--loach-active-state-text-color: var(--loach-text-highlight-color);
+}
+.loach-active-state-text {
+	--loach-active-state-text-color: var(--loach-text-highlight-color);
+}
+.loach-active-state-background {
+	--loach-active-state-background-color: var(--loach-view-background-highlight-color);
 }

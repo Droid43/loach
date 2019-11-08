@@ -38,7 +38,7 @@ export default Vue.component(createNamespace('nav-bar-left'), {
     },
     methods: {
         goBack(){
-            LApp.getInstance().popPage(true, this.$el);
+            LApp.getInstance().popPage(true);
         }
     },
 })

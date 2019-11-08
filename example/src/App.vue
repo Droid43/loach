@@ -7,6 +7,7 @@
 </style>
 <script>
 	import routes from './routes';
+	import home from './pages/Home'
 	export default {
 		name    : 'App',
 		data() {
@@ -20,10 +21,15 @@
 		},
 		methods : {
 			getAppConfig(){
+				routes.unshift({
+					name: 'home',
+					path: '/',
+					component: home
+				});
 				return {
 					routes:routes,
-					currentPage: {
-						name: '/',
+					rootRoute: {
+						name: 'home',
 						param: {}
 					}
 				}

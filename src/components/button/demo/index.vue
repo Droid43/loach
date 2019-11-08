@@ -1,8 +1,8 @@
 <!--name-->
 <template>
-	<div>
+	<l-page title="Button Demo">
 		<l-button></l-button>
-	</div>
+	</l-page>
 </template>
 
 <style lang="less" scoped>
@@ -12,6 +12,7 @@
 <script>
 	import LButton from '../index.ts'
 	export default {
+		name:'demo-button',
 		props     : {},
 		data() {
 			return {

@@ -11,6 +11,7 @@
 
 <script>
 	export default {
+		name:'demo-nav-bar-left',
 		props     : {},
 		data() {
 			return {

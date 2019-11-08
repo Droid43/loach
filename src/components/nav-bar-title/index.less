@@ -1,6 +1,10 @@
 .loach-nav-bar-title{
+	--loach-nav-bar-title-left: 0px;
 	flex-shrink: 1;
 	display: flex;
+	position: relative;
+	left: var(--loach-nav-bar-title-left);
+	max-width: calc(60% - var(--loach-app-bload-edge) * 4);
 	justify-content: center;
 	align-items: center;
 	font-size: @loach-nav-bar-title-font-size;

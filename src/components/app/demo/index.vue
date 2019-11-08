@@ -1,8 +1,8 @@
 <!--name-->
 <template>
-	<div>
-
-	</div>
+	<l-page title="App Demo">
+		<div>app</div>
+	</l-page>
 </template>
 
 <style lang="less" scoped>
@@ -11,6 +11,7 @@
 
 <script>
 	export default {
+		name:'demo-app',
 		props     : {},
 		data() {
 			return {

@@ -1,13 +1,15 @@
 
 @import "../../style/index";
 .loach-nav-bar-left{
+	--loach-text-highlight-color: var(--loach-nav-text-highlight-color);
 	padding: 0 @loach-app-blood-edge;
 	flex-shrink: 0;
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	width: 20%;
+	max-width: 20%;
 	height: 100%;
+	color: var(--loach-active-state-text-color, @loach-nav-text-normal-color);
 	&-back-arrow{
 		--back-arrow-radius: 6px;
 		--back-arrow-width: 2.5px;
@@ -15,8 +17,8 @@
 		height: calc(2 * var(--back-arrow-radius));
 		margin-top: calc(0.207 * var(--back-arrow-radius));
 		padding-left: calc(0.207 * var(--back-arrow-radius));
-		border-top: var(--back-arrow-width) solid @load-nav-text-normal-color;
-		border-left: var(--back-arrow-width) solid @load-nav-text-normal-color;
+		border-top: var(--back-arrow-width) solid var(--loach-active-state-text-color, @loach-nav-text-normal-color);
+		border-left: var(--back-arrow-width) solid var(--loach-active-state-text-color, @loach-nav-text-normal-color);
 		border-radius: calc(0.5 * var(--back-arrow-width));
 		transform: rotateZ(-45deg);
 	}

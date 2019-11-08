@@ -1,6 +1,21 @@
 .ios{
-	--loach-status-bar-height: 20px;
+	--loach-theme-light-color: #73f4b1;
+	--loach-theme-dark-color: #6e81f4;
+	--loach-theme-color: #7060d2;
+
+	--loach-app-bload-edge: 10px;
+
+	--loach-status-bar-height: env(safe-area-inset-top);
+
+	--loach-nav-text-normal-color: rgba(255,255,255,1);
+	--loach-nav-text-highlight-color: rgba(180,180,180,0.8);
+
 	--loach-nav-bar-container-height: 44px;
 	--loach-nav-bar-height: calc(var(--loach-status-bar-height) + var(--loach-nav-bar-container-height));
-	--loach-app-bload-edge: 10px;
+
+	--loach-text-normal-color: rgba(0,0,0,1);
+	--loach-text-highlight-color: rgba(0,0,0,0.8);
+
+	--loach-view-background-normal-color: rgba(255,255,255,1);
+	--loach-view-background-highlight-color: rgba(255,255,255,0.8);
 }

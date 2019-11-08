@@ -5,20 +5,23 @@ import {createNamespace} from '../../utils/NameSpace'
 // import LNavBarTitle from '../nav-bar-title/index.ts'
 // import LNavBarRight from '../nav-bar-right/index.ts'
 
-export default Vue.component( createNamespace('nav-bar') ,{
+export default Vue.component(createNamespace('nav-bar'), {
     // components:{
     //     LNavBarLeft,
     //     LNavBarTitle,
     //     LNavBarRight
     // },
-    data () {
-        return {
-        }
+    data() {
+        return {}
     },
-    props:{
+    props: {
         leftTitle: {
             type: String,
             default: '返回'
+        },
+        hiddenLeft: {
+            type: Boolean,
+            default: false
         },
         title: {
             type: String,
@@ -29,36 +32,39 @@ export default Vue.component( createNamespace('nav-bar') ,{
             default: ''
         }
     },
-    computed: {
-    },
-    methods: {
-
-    },
+    computed: {},
+    methods: {},
     // `createElement` 是可推导的，但是 `render` 需要返回值类型
-    render (createElement): VNode {
+    render(createElement): VNode {
         const {
-            leftTitle, title, rightTitle
+            leftTitle, hiddenLeft, title, rightTitle
         } = this.$props;
-        return createElement('div',{
-            class:{
-                'loach-nav-bar': true
-            }
-        },[
-            createElement('l-nav-bar-left', {
-                props:{
+        let itemList = [];
+        if (!hiddenLeft) {
+            itemList.push(createElement('l-nav-bar-left', {
+                props: {
                     title: leftTitle
                 }
-            }),
+            }));
+        }
+        itemList.push(
             createElement('l-nav-bar-title', {
-                props:{
+                props: {
                     title: title
                 }
-            }),
+            })
+        );
+        itemList.push(
             createElement('l-nav-bar-right', {
-                props:{
+                props: {
                     title: rightTitle
                 }
             })
-        ])
+        );
+        return createElement('div', {
+            class: {
+                'loach-nav-bar': true
+            }
+        }, itemList)
     }
 })

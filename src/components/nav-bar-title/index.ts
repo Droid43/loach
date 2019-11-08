@@ -23,6 +23,11 @@ export default Vue.component( createNamespace('nav-bar-title') ,{
         const {
             title
         } = this.$props;
+        this.$nextTick(() => {
+            console.log(this.$el);
+            let left = (document.body.clientWidth - this.$el.clientWidth) / 2 - this.$el.offsetLeft;
+            this.$el.style.setProperty('--loach-nav-bar-title-left', left + 'px');
+        });
         return createElement('span', {
             class: {
                 'loach-nav-bar-title': true

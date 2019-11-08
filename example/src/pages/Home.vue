@@ -1,37 +1,63 @@
 <!--name-->
 <template>
-	<div>
+	<l-page title="Home" :hidden-left="true">
 		<h1>组件列表</h1>
-		<div v-for="(item, index) in itemList" :key="index">
-			<router-link :to="item.path" >{{item.name | upperFirstChat}}</router-link>
+		<div v-for="(item, index) in itemList"
+		     :key="index"
+		     class="item-force loach-need-click"
+		     @click="clickItem(item)">
+			<div @click.stop="clickItemContent(item)"
+					class="item-force loach-need-click">
+				{{item.name | upperFirstChat}}
+			</div>
 		</div>
-	</div>
+	</l-page>
 </template>
 
 <style lang="less" scoped>
+	.item-force {
+		width   : 100%;
+		padding : 20px 0;
+	}
 
+	/*.item-force:active {*/
+	/*	background-color : red;*/
+	/*}*/
 </style>
-
 <script>
+	import {LApp} from '../../../src/utils/LApp';
 
 	export default {
+		name      : 'demo-home',
 		props     : {},
 		data() {
 			return {
 				itemList: '',
 			};
 		},
-		filters: {
-			upperFirstChat(word){
+		filters   : {
+			upperFirstChat(word) {
 				return word[0].toUpperCase() + word.substr(1);
-			}
+			},
 		},
 		components: {},
 		computed  : {},
 		methods   : {
 			init() {
-				this.itemList = this.$router.options.routes.slice(1);
+				this.itemList = LApp.getInstance().getRoutes().slice(1);
 			},
+			clickItem(item) {
+				console.log(item);
+				LApp.getInstance().pushPage({
+					name: item.name,
+				});
+			},
+			clickItemContent(item) {
+				console.log(item);
+				LApp.getInstance().pushPage({
+					name: item.name,
+				});
+			}
 		},
 		mounted() {
 			this.init();

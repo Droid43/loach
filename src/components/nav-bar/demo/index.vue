@@ -14,6 +14,7 @@
 <script>
 	import LNavBar from '../index.ts'
 	export default {
+		name:'demo-nav-bar',
 		props     : {},
 		data() {
 			return {
