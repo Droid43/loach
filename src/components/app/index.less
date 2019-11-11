@@ -1,0 +1,22 @@
+
+@import "../../style/index";
+.loach-app{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+	& &-transform{
+		--loach-app-transform-progress: 0.0;
+	}
+	& &-page-prev{
+		transform: translateX(calc(-100% + var(--loach-app-transform-progress)*100%));
+	}
+	& &-page-current{
+		transform: translateX(calc(var(--loach-app-transform-progress)*100%));
+	}
+	& &-page-next{
+		transform: translateX(calc(100% + var(--loach-app-transform-progress)*100%));
+	}
+}

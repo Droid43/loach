@@ -60,6 +60,6 @@ typings/
 # next.js build output
 .next
 .idea
-index.less
-index.ts
+src/components/index.less
+src/components/index.ts
 routes.ts
