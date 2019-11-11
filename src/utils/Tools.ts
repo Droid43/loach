@@ -31,4 +31,27 @@ export default class Tools {
     static uniqueTag(): string {
         return Tools.uuid();
     }
+
+    static addClass(ele:Element, className:string){
+        if(!ele)return;
+        if(!className) return;
+        if(!ele.className){
+            ele.className = className;
+        }else {
+            ele.className += ' ' + className;
+        }
+    }
+
+    static removeClass(ele:Element, className:string){
+        if(!ele)return;
+        if(!className) return;
+        if(ele.className){
+            let reg = new RegExp(` ${className}`, 'g');
+            ele.className = ele.className.replace(reg, '');
+            reg = new RegExp(`${className} `, 'g');
+            ele.className = ele.className.replace(reg, '');
+            reg = new RegExp(`${className}`, 'g');
+            ele.className = ele.className.replace(reg, '');
+        }
+    }
 }

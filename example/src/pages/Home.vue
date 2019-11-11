@@ -47,13 +47,11 @@
 				this.itemList = LApp.getInstance().getRoutes().slice(1);
 			},
 			clickItem(item) {
-				console.log(item);
 				LApp.getInstance().pushPage({
 					name: item.name,
 				});
 			},
 			clickItemContent(item) {
-				console.log(item);
 				LApp.getInstance().pushPage({
 					name: item.name,
 				});

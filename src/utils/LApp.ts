@@ -1,6 +1,14 @@
 import {VNode, VueConstructor, CreateElement} from 'vue';
 import {LTouch, LTouchBackEvent} from './LTouch'
 import Tools from './Tools'
+import {LPageTransitionManager} from './TransitionModule'
+import Vue from 'vue'
+
+interface Vue {
+    $LApp: LApp;
+    $LRoute: {};
+    display(pageList: VNode[]): void;
+}
 
 type LAppRoute = {
     name: string;
@@ -36,9 +44,9 @@ export class LApp implements LTouchBackEvent {
     private routeMap: { [key: string]: LAppRoute };
     private readonly appTouch: LTouch;
     private readonly pageQueue: VNode[];
-    private prevPage: VNode;
-    private currentPage: VNode;
-    private nextPage: VNode;
+    private prevPage: VNode | undefined;
+    private currentPage: VNode | undefined;
+    private nextPage: VNode | undefined;
     private hasBind = false;
     private appNode: VNode;
     private createPage: CreateElement;
@@ -51,28 +59,34 @@ export class LApp implements LTouchBackEvent {
             throw Error("before use LApp.getInstance(), new LApp() need to be called");
         }
     }
-    static getPageClass(state:LAppPageState){
+
+    static getPageClass(state: LAppPageState) {
         let className: string;
         switch (state) {
-            case LAppPageState.Prev:{
+            case LAppPageState.Prev: {
                 className = 'loach-app-page-prev';
-            }break;
-            case LAppPageState.Current:{
+            }
+                break;
+            case LAppPageState.Current: {
                 className = 'loach-app-page-current';
-            }break;
-            case LAppPageState.Next:{
+            }
+                break;
+            case LAppPageState.Next: {
                 className = 'loach-app-page-next';
-            }break;
+            }
+                break;
         }
         return className;
     }
 
-    static fixPageClass(page:VNode, state:LAppPageState){
+    static fixPageClass(page: VNode, state: LAppPageState) {
         let className = LApp.getPageClass(state);
-        if(page.elm){
-            page.elm.className = page.elm.className.replace(/[ ]*loach-app-page-[\w-]*/, '') + ' ' + className;
+        let ele = <Element><any>page.elm;
+        if (ele) {
+            ele.className = ele.className.replace(/[ ]*loach-app-page-[\w-]*/, '') + ' ' + className;
         }
     }
+
     constructor(config: LAppConfig) {
         if (!config) {
             throw new Error("new Lapp(config) need \"config\" to create");
@@ -95,7 +109,7 @@ export class LApp implements LTouchBackEvent {
     }
 
     // private method
-    initRouteMap() {
+    private initRouteMap() {
         let routeMap = {};
         this.config.routes.forEach((route: LAppRoute) => {
             if (routeMap[route.name]) {
@@ -106,7 +120,7 @@ export class LApp implements LTouchBackEvent {
         this.routeMap = routeMap;
     }
 
-    initRootPage() {
+    private initRootPage() {
         let page = this.createPageWithConfig(this.config.rootRoute, LAppPageState.Current);
         if (page) {
             this.pageQueue.push(page);
@@ -114,7 +128,7 @@ export class LApp implements LTouchBackEvent {
         }
     }
 
-    createPageWithConfig(routeConfig: LAppRouteConfig,state:LAppPageState ) {
+    private createPageWithConfig(routeConfig: LAppRouteConfig, state: LAppPageState) {
         let className = LApp.getPageClass(state);
         let {name, params} = routeConfig;
         if (!name) {
@@ -129,15 +143,16 @@ export class LApp implements LTouchBackEvent {
         let page = this.createPage(route.component, {
             class: [className]
         });
-        page.context.$LApp = this;
-        page.context.$LRoute = {
+        let context = <Vue>page.context;
+        context.$LApp = this;
+        context.$LRoute = {
             name: name,
             params: params || {}
         };
         return page;
     }
 
-    updateDisPlayPage() {
+    private updateDisPlayPage() {
         let pageList = [];
         if (this.prevPage) {
             LApp.fixPageClass(this.prevPage, LAppPageState.Prev);
@@ -151,7 +166,16 @@ export class LApp implements LTouchBackEvent {
             LApp.fixPageClass(this.nextPage, LAppPageState.Next);
             pageList.push(this.nextPage);
         }
-        this.appNode.context.display(pageList);
+        let context = <Vue>this.appNode.context;
+        context.display(pageList);
+    }
+
+    private addPageAnimationClass() {
+        LPageTransitionManager.addTransitionClassToPage(this.prevPage, this.currentPage, this.nextPage);
+    }
+
+    private removePageAnimationClass() {
+        LPageTransitionManager.removeTransitionClassToPage(this.prevPage, this.currentPage, this.nextPage);
     }
 
     // public method
@@ -173,29 +197,89 @@ export class LApp implements LTouchBackEvent {
     }
 
     pushPage(routeConfig: LAppRouteConfig, animated = true) {
-        let page = this.createPageWithConfig(routeConfig, LAppPageState.Current);
+        let page = this.createPageWithConfig(routeConfig, LAppPageState.Next);
         if (!page) return;
-        this.pageQueue.push(page);
-        this.prevPage = this.currentPage;
-        this.currentPage = page;
-        console.log('Push');
+        // this.pageQueue.push(page);
+        // this.prevPage = this.currentPage;
+        // this.currentPage = page;
+
+        this.prevPage = undefined;
+        this.nextPage = page;
         this.updateDisPlayPage();
+
+        let self = this;
+        let pagePushHander = () => {
+            self.pageQueue.push(page);
+            self.prevPage = this.currentPage;
+            self.currentPage = page;
+            self.nextPage = undefined;
+            self.updateDisPlayPage();
+        };
+        let elm: HTMLElement = <any>(this.appNode.elm);
+        self.removePageAnimationClass();
+        elm.style.setProperty('--loach-app-transform-progress', '0');
+        if (animated) {
+            let context = <Vue>self.appNode.context;
+            context.$nextTick(() => {
+                let currentEle: HTMLElement = <any>(self.currentPage && self.currentPage.elm);
+                self.addPageAnimationClass();
+                LPageTransitionManager.animation(currentEle, () => {
+                    context.$nextTick(() => {
+                        elm.style.setProperty('--loach-app-transform-progress', '-1');
+                    });
+                }, () => {
+                    self.removePageAnimationClass();
+                    pagePushHander();
+                    elm.style.setProperty('--loach-app-transform-progress', '0');
+                });
+            });
+        } else {
+            pagePushHander();
+        }
     }
 
     popPage(animated = true) {
         // window.history.back();
-        if (this.prevPage) {
-            this.currentPage = this.prevPage
+        let self = this;
+        let pageBackHander = () => {
+            if (self.prevPage) {
+                self.currentPage = self.prevPage
+            }
+            self.pageQueue.pop();
+            self.prevPage = self.pageQueue.length > 1 ? self.pageQueue[self.pageQueue.length - 2] : null;
+            // console.log('Back', self.appTouch);
+            self.updateDisPlayPage();
+        };
+        let elm: HTMLElement = <any>(this.appNode.elm);
+        let progress = elm.style.getPropertyValue('--loach-app-transform-progress');
+        if (animated && progress !== '1') {
+            let currentEle: HTMLElement = <any>(this.currentPage && this.currentPage.elm);
+            this.addPageAnimationClass();
+            let self = this;
+            LPageTransitionManager.animation(currentEle, () => {
+                elm.style.setProperty('--loach-app-transform-progress', '1');
+            }, () => {
+                self.removePageAnimationClass();
+                pageBackHander();
+                elm.style.setProperty('--loach-app-transform-progress', '0');
+            });
+        } else {
+            pageBackHander();
+            elm.style.setProperty('--loach-app-transform-progress', '0');
         }
-        this.pageQueue.pop();
-        this.prevPage = this.pageQueue.length > 1 ? this.pageQueue[this.pageQueue.length - 2] : null;
-        console.log('Back', this.appTouch);
-        this.updateDisPlayPage();
     }
 
+    isPageTranstion(){
+        let elm: HTMLElement = <any>(this.appNode.elm);
+        let progress = elm.style.getPropertyValue('--loach-app-transform-progress');
+        let isPageTranstion = progress === '-1' || progress === '1';
+        // console.log(progress, isPageTranstion ? '页面跳转中' : '跳转完成');
+        return isPageTranstion;
+    }
     // LTouch LTouchBackEvent delegate
     private touchBackStart() {
         // console.log('TouchBack Start');
+        this.removePageAnimationClass();
     }
 
     private touchBackMove(moveOffset: Number) {
@@ -203,17 +287,30 @@ export class LApp implements LTouchBackEvent {
         if (!this.prevPage) {
             return;
         }
-        this.appNode.elm.style.setProperty('--loach-app-transform-offset', moveOffset + 'px');
+        let elm: HTMLElement = <any>(this.appNode.elm);
+        elm.style.setProperty('--loach-app-transform-progress', moveOffset / elm.clientWidth + '');
     }
 
     private touchBackFinish(canBack: Boolean) {
         // console.log('TouchBack End', canBack);
+        // return;
         if (!this.prevPage) {
             return;
         }
-        this.appNode.elm.style.removeProperty('--loach-app-transform-offset');
+        let elm: HTMLElement = <any>(this.appNode.elm);
         if (canBack) {
             this.popPage();
+        } else {
+            this.addPageAnimationClass();
+            let self = this;
+            let currentEle: HTMLElement = <any>(this.currentPage && this.currentPage.elm);
+
+            LPageTransitionManager.animation(currentEle, () => {
+                elm.style.setProperty('--loach-app-transform-progress', '0');
+            }, () => {
+                self.removePageAnimationClass();
+            });
         }
+        // elm.style.setProperty('--loach-app-transform-progress', 0);
     }
 }

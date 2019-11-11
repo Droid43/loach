@@ -1,4 +1,6 @@
+import {VNode} from 'vue';
 import {createCssNamespace} from './NameSpace'
+import Tools from './Tools'
 
 const ActiveNoneClassList = [
     'need-click'
@@ -21,7 +23,7 @@ const DisableActiveClassList = [
     'not-show-active',
 ].map((item) => createCssNamespace(item));
 
-export enum LElementActiveType {
+enum LElementActiveType {
     None,
     Text,
     Background,
@@ -127,7 +129,7 @@ export class LElementStateManager {
         if(!this.ele)return;
         if(!this.canActive)return;
         let className = this.ele.className;
-        if(className){
+        if(className && this.activeClassName){
             this.ele.className = `${className} ${this.activeClassName}`;
         }
     }
@@ -135,11 +137,41 @@ export class LElementStateManager {
         if(!this.ele)return;
         if(!this.canActive)return;
         let className = this.ele.className;
-        if(className){
+        if(className && this.activeClassName){
             this.ele.className = className.replace(` ${this.activeClassName}`, '');
         }
     }
 
 }
+
+const pageTransitionClass = createCssNamespace('page-animation');
+export const LPageTransitionManager = {
+    addTransitionClassToPage(...pages:(VNode | undefined)[]){
+        pages.forEach(page => {
+            if(!page)return;
+            let ele:Element = <Element><any>page.elm;
+            Tools.addClass(ele, pageTransitionClass);
+        });
+    },
+    removeTransitionClassToPage(...pages:(VNode | undefined)[]){
+        pages.forEach(page => {
+            if(!page)return;
+            let ele:Element = <Element><any>page.elm;
+            Tools.removeClass(ele, pageTransitionClass);
+        });
+    },
+    animation(ele:Element|undefined, transitionSetter:{():void} | undefined, animationEndHandler:{():void}| undefined){
+        if(!ele || ele.className.indexOf(pageTransitionClass) < 0)return;
+        if(typeof transitionSetter !== 'function') return;
+        if(typeof animationEndHandler === 'function') {
+            const animationEndCallback = () => {
+                animationEndHandler();
+                ele.removeEventListener("transitionend", animationEndCallback);
+            };
+            ele.addEventListener("transitionend", animationEndCallback);
+        }
+        transitionSetter();
+    }
+};
 
 

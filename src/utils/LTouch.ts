@@ -1,4 +1,4 @@
-import {LAppConfig} from "./LApp";
+import {LApp, LAppConfig} from "./LApp";
 import {LElementStateManager} from './TransitionModule'
 
 enum LTouchType {
@@ -22,6 +22,7 @@ export class LTouch {
     private ele: Element;
     public delegate: LTouchBackEvent;
     public touchStartX: Number;
+    public touchStartTime: Number;
     private clickStateManager: LElementStateManager;
 
     constructor(){
@@ -66,19 +67,24 @@ export class LTouch {
             self.touchType = LTouchType.Multiple;
             return;
         }
+        if(LApp.getInstance().isPageTranstion()){
+            e.preventDefault();
+            return;
+        }
         // console.log('userTouchStart', e.target);
         // console.log('userTouchStart', e.target.__vue__);
         // console.log('userTouchStart', e);
         let touch = touchList[0];
         // console.log('userTouchStart', touch.clientX, touch.clientY);
         self.touchStartX = touch.clientX;
-        let gestureStartMaxOffset = 8;
+        self.touchStartTime = new Date().getTime();
+        let gestureStartMaxOffset = 10;
         if (touch.clientX < gestureStartMaxOffset) {
             self.touchType = LTouchType.GestureBack;
             if (self.delegate) {
                 self.delegate.touchBackStart();
             }
-            console.log('userTouchStart preventDefault');
+            console.log('GestureBack preventDefault');
             e.preventDefault();
             return;
         }
@@ -98,7 +104,7 @@ export class LTouch {
         }
         let touch = touchList[0];
         let moveOffset = touch.clientX - self.touchStartX;
-        let maxOffset = self.ele.clientWidth/0.9;
+        let maxOffset = self.ele.clientWidth;
         moveOffset = moveOffset < 0 ? 0 : moveOffset;
         moveOffset = moveOffset >  maxOffset ? maxOffset : moveOffset;
         // console.log(moveOffset);
@@ -120,9 +126,13 @@ export class LTouch {
         }
         let touch = touchList[0];
         let moveOffset = touch.clientX - self.touchStartX;
+        let moveTime = new Date().getTime() - self.touchStartTime;
+        let speed = moveOffset/moveTime;
+        // console.log(moveOffset, moveTime, speed);
         let gestureEndMinOffset = self.ele.clientWidth * 0.6;
+        let gestureEndMinSpeed = 0.4;
         if (self.touchType === LTouchType.GestureBack && self.delegate) {
-            self.delegate.touchBackFinish(moveOffset > gestureEndMinOffset);
+            self.delegate.touchBackFinish(moveOffset > gestureEndMinOffset || speed > gestureEndMinSpeed);
         }
         if(e.cancelable){
             if(moveOffset > 1){
