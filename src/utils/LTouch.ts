@@ -64,7 +64,10 @@ export class LTouch {
         let self = LTouch.__LTouch;
         let touchList = e.touches;
         if (touchList.length !== 1) {
-            self.touchType = LTouchType.Multiple;
+            if(self.touchType === LTouchType.None){
+                self.touchType = LTouchType.Multiple;
+                console.log('Multiple');
+            }
             return;
         }
         if(LApp.getInstance().isPageTranstion()){
