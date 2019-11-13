@@ -1,13 +1,13 @@
 <!--name-->
 <template>
-	<div>
-		<l-nav-bar class="demo-nav-bar" title="NavBar Demo" rightTitle="btn"></l-nav-bar>
-	</div>
+	<l-page title="NavBar Demo">
+		<l-nav-bar class="demo-nav-bar" title="NavBar Demo" rightTitle="btn"/>
+	</l-page>
 </template>
 
 <style lang="less" scoped>
 .demo-nav-bar{
-	z-index: 1;
+	margin: 10px 0;
 }
 </style>
 

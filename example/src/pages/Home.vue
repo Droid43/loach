@@ -17,7 +17,7 @@
 <style lang="less" scoped>
 	.item-force {
 		width   : 100%;
-		padding : 20px 0;
+		padding : 5px 0;
 	}
 
 	/*.item-force:active {*/
@@ -25,14 +25,14 @@
 	/*}*/
 </style>
 <script>
-	import {LApp} from '../../../src/utils/LApp';
+	import {LApp, LAppRouteTransType} from '../../../src/utils/LApp';
 
 	export default {
 		name      : 'demo-home',
 		props     : {},
 		data() {
 			return {
-				itemList: '',
+				itemList: [],
 			};
 		},
 		filters   : {
@@ -47,13 +47,17 @@
 				this.itemList = LApp.getInstance().getRoutes().slice(1);
 			},
 			clickItem(item) {
-				LApp.getInstance().pushPage({
-					name: item.name,
-				});
+				this.pushItem(item);
 			},
 			clickItemContent(item) {
+				this.pushItem(item);
+			},
+			pushItem(item){
+				console.log(item.name, this.itemList.indexOf(item) % 2 === 0);
 				LApp.getInstance().pushPage({
 					name: item.name,
+					params: {},
+					transType: this.itemList.indexOf(item) % 2 === 0 ? LAppRouteTransType.Line : LAppRouteTransType.Modal
 				});
 			}
 		},

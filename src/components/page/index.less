@@ -9,7 +9,8 @@
 	box-shadow: 0 0 10px 10px rgba(0,0,0,0.1);
 	transform-origin:50% 0;
 	&-animation{
-		transition: transform calc(@loach-app-transition-duration * (1 - max(calc(var(--loach-app-transform-progress) * var(--loach-app-transform-progress)), 0.0001))) ease-in-out;
+		transition: transform @loach-app-transition-duration cubic-bezier(0.800, 0.400, 0.200, 0.800);
+		transition-timing-function: cubic-bezier(0.800, 0.400, 0.200, 0.800);
 	}
 	& &-container{
 		position: absolute;
@@ -17,13 +18,13 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		padding-top: @loach-nav-bar-height;
+		margin-top: @loach-nav-bar-height;
 		overflow: auto;
 		-webkit-overflow-scrolling: touch;
 		background-color: white;
 		content: '';
 	}
 	& &-container-without-nav-bar{
-		padding-top: @loach-status-bar-height;
+		margin-top: 0;
 	}
 }

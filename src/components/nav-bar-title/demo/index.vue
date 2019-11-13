@@ -1,7 +1,7 @@
 <!--name-->
 <template>
-	<div>
-	</div>
+	<l-page title="NavBarTitle Demo">
+	</l-page>
 </template>
 
 <style lang="less" scoped>

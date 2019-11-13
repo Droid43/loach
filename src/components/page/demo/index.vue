@@ -1,12 +1,10 @@
 <!--name-->
 <template>
-	<div>
-		<l-page title="Page Demo">
-			<div v-for="item in 100">
-				hello
-			</div>
-		</l-page>
-	</div>
+	<l-page title="Page Demo">
+		<div v-for="item in 100">
+			hello
+		</div>
+	</l-page>
 </template>
 
 <style lang="less" scoped>

@@ -9,6 +9,7 @@
 	overflow: hidden;
 	& &-transform{
 		--loach-app-transform-progress: 0.0;
+		--loach-app-transform-direct: 0.5; // 0.5 push -0.5 pop
 	}
 	& &-page-prev{
 		transform: translateX(calc(-100% + var(--loach-app-transform-progress)*100%));
@@ -18,5 +19,33 @@
 	}
 	& &-page-next{
 		transform: translateX(calc(100% + var(--loach-app-transform-progress)*100%));
+	}
+
+	& &-page-modal-prev{
+		--p: var(--loach-app-transform-progress);
+		--push: 0px;
+		--pop: calc((1 - var(--p)) * 0px);
+		--loach-app-flag-push: calc(0.5 + var(--loach-app-transform-direct));
+		--loach-app-flag-pop: calc(0.5 - var(--loach-app-transform-direct));
+		--move: calc(var(--loach-app-flag-push) * var(--push) + var(--loach-app-flag-pop) * var(--pop));
+		transform: translateY(var(--move));
+	}
+	& &-page-modal-current{
+		--p: var(--loach-app-transform-progress);
+		--push: calc(var(--p) * -0px);
+		--pop: calc(var(--p) * 100%);
+		--loach-app-flag-push: calc(0.5 + var(--loach-app-transform-direct));
+		--loach-app-flag-pop: calc(0.5 - var(--loach-app-transform-direct));
+		--move: calc(var(--loach-app-flag-push) * var(--push) + var(--loach-app-flag-pop) * var(--pop));
+		transform: translateY(var(--move));
+	}
+	& &-page-modal-next{
+		--p: var(--loach-app-transform-progress);
+		--push: calc(100% + var(--p) * 100%);;
+		--pop: 0px;
+		--loach-app-flag-push: calc(0.5 + var(--loach-app-transform-direct));
+		--loach-app-flag-pop: calc(0.5 - var(--loach-app-transform-direct));
+		--move: calc(var(--loach-app-flag-push) * var(--push) + var(--loach-app-flag-pop) * var(--pop));
+		transform: translateY(var(--move));
 	}
 }

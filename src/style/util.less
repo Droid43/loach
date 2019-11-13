@@ -1,5 +1,6 @@
+@import "time";
 // 单行文本超出显示省略号
-.loach-no-wrap() {
+.loach-util-no-wrap() {
 	-ms-text-overflow: ellipsis;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -8,7 +9,7 @@
 }
 
 // 多行文本超出显示省略号
-.loach-no-wrap-multi(@n) {
+.loach-util-no-wrap-multi(@n) {
 	display: -webkit-box !important;
 	-ms-text-overflow: ellipsis;
 	text-overflow: ellipsis;
@@ -18,3 +19,7 @@
 	-webkit-box-align: start;
 	-webkit-line-clamp: @n; // 可显示行数
 }
+
+//.loach-util-transition() {
+//	transition: color, background-color 10s ease-in-out;
+//}
