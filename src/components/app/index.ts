@@ -1,8 +1,7 @@
 // @ts-ignore
 import Vue, {VNode, CreateElement} from 'vue';
-import LTouch from '../../utils/LTouch'
 import {createNamespace} from '../../utils/NameSpace'
-import {LAppConfig, LApp} from "../../utils/LApp";
+import {LApp} from "../../utils/LApp";
 
 export default Vue.component( createNamespace('app') ,{
     data () {
@@ -12,7 +11,7 @@ export default Vue.component( createNamespace('app') ,{
     },
     props:{
         config: {
-            type: LAppConfig,
+            type: Object,
             default: null
         },
         currentRoute: {
@@ -44,7 +43,8 @@ export default Vue.component( createNamespace('app') ,{
         new LApp(this.config);
     },
     methods: {
-        display(pageList){
+        display(pageList:Array<VNode>){
+            // @ts-ignore
             this.pageList = pageList;
         }
     },

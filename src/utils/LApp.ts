@@ -1,15 +1,21 @@
 import {VNode, VueConstructor, CreateElement} from 'vue';
 import {LTouch, LTouchBackEvent} from './LTouch'
-import Tools from './Tools'
+// import Tools from './Tools'
 import {LPageTransitionManager} from './TransitionModule'
-import Vue from 'vue'
 
-interface Vue {
-    $LApp: LApp;
-    $LRoute: {};
-    display(pageList: VNode[]): void;
+declare module 'vue/types/vue' {
+    interface Vue {
+        $LApp: LApp;
+        $LRoute: LAppRouteConfig;
+        display(pageList: VNode[]): void;
+    }
 }
 
+declare global {
+    interface Window {
+        $LApp: LApp;
+    }
+}
 // declare module 'vue' {
 //     interface VNode {
 //         transType: Boolean;
@@ -22,15 +28,15 @@ type LAppRoute = {
     component: VueConstructor;
 }
 
-export enum LAppRouteTransType{
+export enum LAppRouteTransType {
     Line,
     Modal,
 }
 
 export type LAppRouteConfig = {
     name: string;
-    params: object | undefined;
-    transType: LAppRouteTransType;
+    params?: object;
+    transType?: LAppRouteTransType;
 }
 
 export type LAppConfig = {
@@ -38,6 +44,7 @@ export type LAppConfig = {
     rootRoute: LAppRouteConfig
 }
 
+// @ts-ignore
 type LAppPageQueueItem = {
     name: string;
     path: string;
@@ -53,15 +60,15 @@ enum LAppPageState {
 
 export class LApp implements LTouchBackEvent {
     private readonly config: LAppConfig;
-    private routeMap: { [key: string]: LAppRoute };
+    private routeMap!: { [key: string]: LAppRoute };
     private readonly appTouch: LTouch;
     private readonly pageQueue: VNode[];
     private prevPage: VNode | undefined;
     private currentPage: VNode | undefined;
     private nextPage: VNode | undefined;
-    private hasBind = false;
-    private appNode: VNode;
-    private createPage: CreateElement;
+    private appNode!: VNode;
+    private createPage!: CreateElement;
+    hasBind = false;
 
     // static method
     static getInstance() {
@@ -71,6 +78,7 @@ export class LApp implements LTouchBackEvent {
             throw Error("before use LApp.getInstance(), new LApp() need to be called");
         }
     }
+
     constructor(config: LAppConfig) {
         if (!config) {
             throw new Error("new Lapp(config) need \"config\" to create");
@@ -127,13 +135,15 @@ export class LApp implements LTouchBackEvent {
         let page = this.createPage(route.component, {
             class: [className]
         });
-        let context = <Vue>page.context;
-        context.$LApp = this;
-        context.$LRoute = {
-            name: name,
-            params: params || {},
-            transType: transType,
-        };
+        let context = page.context;
+        if(context){
+            context.$LApp = this;
+            context.$LRoute = {
+                name: name,
+                params: params || {},
+                transType: transType,
+            };
+        }
         return page;
     }
 
@@ -151,8 +161,10 @@ export class LApp implements LTouchBackEvent {
             this.fixPageClass(this.nextPage, LAppPageState.Next);
             pageList.push(this.nextPage);
         }
-        let context = <Vue>this.appNode.context;
-        context.display(pageList);
+        let context = this.appNode.context;
+        if(context){
+            context.display(pageList);
+        }
     }
 
     private addPageAnimationClass() {
@@ -165,12 +177,18 @@ export class LApp implements LTouchBackEvent {
 
     private getPageClass(state: LAppPageState) {
         let transTag = '';
-        if(this.nextPage){
-            transTag = this.nextPage.context.$LRoute.transType === LAppRouteTransType.Modal ? '-modal' : '';
-        }else if(this.currentPage){
-            transTag = this.currentPage.context.$LRoute.transType === LAppRouteTransType.Modal ? '-modal' : '';
+        if (this.nextPage) {
+            let context = this.nextPage.context;
+            if(context){
+                transTag = context.$LRoute.transType === LAppRouteTransType.Modal ? '-modal' : '';
+            }
+        } else if (this.currentPage) {
+            let context = this.currentPage.context;
+            if(context){
+                transTag = context.$LRoute.transType === LAppRouteTransType.Modal ? '-modal' : '';
+            }
         }
-        let className: string;
+        let className = '';
         switch (state) {
             case LAppPageState.Prev: {
                 className = `loach-app-page${transTag}-prev`;
@@ -199,6 +217,7 @@ export class LApp implements LTouchBackEvent {
             this.fixPageClass(this.nextPage, LAppPageState.Next);
         }
     }
+
     private fixPageClass(page: VNode, state: LAppPageState) {
         let className = this.getPageClass(state);
         let ele = <Element><any>page.elm;
@@ -238,6 +257,7 @@ export class LApp implements LTouchBackEvent {
         let self = this;
         let elm: HTMLElement = <any>(this.appNode.elm);
         let pagePushHander = () => {
+            // @ts-ignore
             self.pageQueue.push(page);
             self.prevPage = this.currentPage;
             self.currentPage = page;
@@ -249,21 +269,24 @@ export class LApp implements LTouchBackEvent {
         elm.style.setProperty('--loach-app-transform-progress', '0');
         elm.style.setProperty('--loach-app-transform-direct', '0.5');
         if (animated) {
-            let context = <Vue>self.appNode.context;
-            context.$nextTick(() => {
-                let transEle: HTMLElement = <any>(self.nextPage && self.nextPage.elm);
-                self.fixAllPageClass();
-                self.addPageAnimationClass();
-                LPageTransitionManager.animation(transEle, () => {
-                    context.$nextTick(() => {
-                        elm.style.setProperty('--loach-app-transform-progress', '-1');
+            let context = self.appNode.context;
+            if(context){
+                context.$nextTick(() => {
+                    let transEle: HTMLElement = <any>(self.nextPage && self.nextPage.elm);
+                    self.fixAllPageClass();
+                    self.addPageAnimationClass();
+                    LPageTransitionManager.animation(transEle, () => {
+                        // @ts-ignore
+                        context.$nextTick(() => {
+                            elm.style.setProperty('--loach-app-transform-progress', '-1');
+                        });
+                    }, () => {
+                        self.removePageAnimationClass();
+                        pagePushHander();
+                        elm.style.setProperty('--loach-app-transform-progress', '0');
                     });
-                }, () => {
-                    self.removePageAnimationClass();
-                    pagePushHander();
-                    elm.style.setProperty('--loach-app-transform-progress', '0');
                 });
-            });
+            }
         } else {
             pagePushHander();
         }
@@ -277,7 +300,7 @@ export class LApp implements LTouchBackEvent {
                 self.currentPage = self.prevPage
             }
             self.pageQueue.pop();
-            self.prevPage = self.pageQueue.length > 1 ? self.pageQueue[self.pageQueue.length - 2] : null;
+            self.prevPage = self.pageQueue.length > 1 ? self.pageQueue[self.pageQueue.length - 2] : undefined;
             // console.log('Back', self.appTouch);
             self.updateDisPlayPage();
         };
@@ -289,41 +312,44 @@ export class LApp implements LTouchBackEvent {
         if (animated && progress !== '1') {
             let transEle: HTMLElement = <any>(this.currentPage && this.currentPage.elm);
             let self = this;
-            let context = <Vue>self.appNode.context;
-            context.$nextTick(() => {
-                self.fixAllPageClass();
-                self.addPageAnimationClass();
-                LPageTransitionManager.animation(transEle, () => {
-                    context.$nextTick(() => {
-                        elm.style.setProperty('--loach-app-transform-progress', '1');
+            let context = self.appNode.context;
+            if(context){
+                context.$nextTick(() => {
+                    self.fixAllPageClass();
+                    self.addPageAnimationClass();
+                    LPageTransitionManager.animation(transEle, () => {
+                        // @ts-ignore
+                        context.$nextTick(() => {
+                            elm.style.setProperty('--loach-app-transform-progress', '1');
+                        });
+                    }, () => {
+                        self.removePageAnimationClass();
+                        pageBackHander();
+                        elm.style.setProperty('--loach-app-transform-progress', '0');
                     });
-                }, () => {
-                    self.removePageAnimationClass();
-                    pageBackHander();
-                    elm.style.setProperty('--loach-app-transform-progress', '0');
                 });
-            });
+            }
         } else {
             pageBackHander();
             elm.style.setProperty('--loach-app-transform-progress', '0');
         }
     }
 
-    isPageTranstion(){
+    isPageTransition() {
         let elm: HTMLElement = <any>(this.appNode.elm);
         let progress = elm.style.getPropertyValue('--loach-app-transform-progress');
-        let isPageTranstion = progress === '-1' || progress === '1';
-        // console.log(progress, isPageTranstion ? '页面跳转中' : '跳转完成');
-        return isPageTranstion;
-    }
-    // LTouch LTouchBackEvent delegate
-    private touchBackStart() {
-        // console.log('TouchBack Start');
-        this.removePageAnimationClass();
-        elm.style.setProperty('--loach-app-transform-direct', '-0.5');
+        // console.log(progress, (progress === '-1' || progress === '1') ? '页面跳转中' : '跳转完成');
+        return progress === '-1' || progress === '1';
     }
 
-    private touchBackMove(moveOffset: Number) {
+    // LTouch LTouchBackEvent delegate
+    // @ts-ignore
+    touchBackStart() {
+        // console.log('TouchBack Start');
+        this.removePageAnimationClass();
+    }
+
+    touchBackMove(moveOffset: number) {
         // console.log('TouchBack Move', moveOffset);
         if (!this.prevPage) {
             return;
@@ -332,7 +358,7 @@ export class LApp implements LTouchBackEvent {
         elm.style.setProperty('--loach-app-transform-progress', moveOffset / elm.clientWidth + '');
     }
 
-    private touchBackFinish(canBack: Boolean) {
+    touchBackFinish(canBack: Boolean) {
         // console.log('TouchBack End', canBack);
         // return;
         if (!this.prevPage) {

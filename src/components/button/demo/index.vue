@@ -1,7 +1,7 @@
 <!--name-->
 <template>
 	<l-page title="Button Demo">
-		<l-button></l-button>
+		<l-button @click=""></l-button>
 	</l-page>
 </template>
 
@@ -11,6 +11,7 @@
 
 <script>
 	import LButton from '../index.ts'
+	import {LApp, LAppRouteConfig, LAppRouteTransType} from '../../../utils/LApp';
 	export default {
 		name:'demo-button',
 		props     : {},
@@ -24,6 +25,11 @@
 		methods   : {
 			init() {
 			},
+			click(){
+				LApp.getInstance().pushPage({
+					name: 'button',
+				});
+			}
 		},
 		mounted() {
 			this.init();

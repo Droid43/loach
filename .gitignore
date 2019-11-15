@@ -63,3 +63,4 @@ typings/
 src/components/index.less
 src/components/index.ts
 routes.ts
+lib

@@ -1,4 +1,4 @@
-import {LApp, LAppConfig} from "./LApp";
+import {LApp} from "./LApp";
 import {LElementStateManager} from './TransitionModule'
 
 enum LTouchType {
@@ -9,23 +9,21 @@ enum LTouchType {
 }
 
 export interface LTouchBackEvent {
-    touchBackStart();
-
-    touchBackMove(moveOffset: Number);
-
-    touchBackFinish(canBack: Boolean);
+    touchBackStart(): void;
+    touchBackMove(moveOffset: Number): void;
+    touchBackFinish(canBack: Boolean): void;
 }
 
 export class LTouch {
     private static __LTouch: LTouch;
     private touchType = LTouchType.None;
-    private ele: Element;
-    public delegate: LTouchBackEvent;
-    public touchStartX: Number;
-    public touchStartTime: Number;
-    private clickStateManager: LElementStateManager;
+    private ele!: HTMLElement;
+    public delegate!: LTouchBackEvent;
+    public touchStartX = 0;
+    public touchStartTime = 0;
+    private clickStateManager!: LElementStateManager;
 
-    constructor(){
+    constructor() {
         LTouch.__LTouch = this;
     }
 
@@ -43,34 +41,34 @@ export class LTouch {
         this.ele = ele;
     }
 
-    private static elementTypeList(e: Element) {
-        let nodeType = [e.className];
-        if(e.parentElement){
-            return nodeType.concat(LTouch.elementTypeList(e.parentElement));
-        }
-        return nodeType;
-    }
+    // private static elementTypeList(e: Element) {
+    //     let nodeType = [e.className];
+    //     if(e.parentElement){
+    //         return nodeType.concat(LTouch.elementTypeList(e.parentElement));
+    //     }
+    //     return nodeType;
+    // }
 
-    private static getCanClickElement(e: Element) {
-        let canClick = e.className.indexOf('loach-need-click') > -1;
-        if(canClick) return e;
-        if(e.parentElement){
-            return LTouch.getCanClickElement(e.parentElement);
-        }
-    }
+    // private static getCanClickElement(e: Element) {
+    //     let canClick = e.className.indexOf('loach-need-click') > -1;
+    //     if(canClick) return e;
+    //     if(e.parentElement){
+    //         return LTouch.getCanClickElement(e.parentElement);
+    //     }
+    // }
 
 
     private static userTouchStart(e: TouchEvent) {
         let self = LTouch.__LTouch;
         let touchList = e.touches;
         if (touchList.length !== 1) {
-            if(self.touchType === LTouchType.None){
+            if (self.touchType === LTouchType.None) {
                 self.touchType = LTouchType.Multiple;
                 console.log('Multiple');
             }
             return;
         }
-        if(LApp.getInstance().isPageTranstion()){
+        if (LApp.getInstance().isPageTransition()) {
             e.preventDefault();
             return;
         }
@@ -109,12 +107,12 @@ export class LTouch {
         let moveOffset = touch.clientX - self.touchStartX;
         let maxOffset = self.ele.clientWidth;
         moveOffset = moveOffset < 0 ? 0 : moveOffset;
-        moveOffset = moveOffset >  maxOffset ? maxOffset : moveOffset;
+        moveOffset = moveOffset > maxOffset ? maxOffset : moveOffset;
         // console.log(moveOffset);
         if (self.touchType === LTouchType.GestureBack && self.delegate) {
             self.delegate.touchBackMove(moveOffset);
         }
-        if(self.touchType === LTouchType.Single && moveOffset > 5){
+        if (self.touchType === LTouchType.Single && moveOffset > 5) {
             self.clickStateManager.deactive();
         }
     }
@@ -130,19 +128,19 @@ export class LTouch {
         let touch = touchList[0];
         let moveOffset = touch.clientX - self.touchStartX;
         let moveTime = new Date().getTime() - self.touchStartTime;
-        let speed = moveOffset/moveTime;
+        let speed = moveOffset / moveTime;
         // console.log(moveOffset, moveTime, speed);
         let gestureEndMinOffset = self.ele.clientWidth * 0.6;
         let gestureEndMinSpeed = 0.4;
         if (self.touchType === LTouchType.GestureBack && self.delegate) {
             self.delegate.touchBackFinish(moveOffset > gestureEndMinOffset || speed > gestureEndMinSpeed);
         }
-        if(e.cancelable){
-            if(moveOffset > 1){
+        if (e.cancelable) {
+            if (moveOffset > 1) {
                 e.preventDefault();
             }
         }
-        if(self.touchType === LTouchType.Single){
+        if (self.touchType === LTouchType.Single) {
             self.clickStateManager.deactive();
         }
         self.touchType = LTouchType.None;
@@ -162,7 +160,7 @@ export class LTouch {
                 self.delegate.touchBackFinish(false);
             }
         }
-        if(self.touchType === LTouchType.Single){
+        if (self.touchType === LTouchType.Single) {
             self.clickStateManager.deactive();
         }
         self.touchType = LTouchType.None;

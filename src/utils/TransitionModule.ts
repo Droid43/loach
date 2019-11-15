@@ -14,10 +14,10 @@ const ActiveAllClassList = [
     'nav-button',
 ].map((item) => createCssNamespace(item));
 
-const ActivableTagList = [
-    'a',
-    'button'
-];
+// const ActivableTagList = [
+//     'a',
+//     'button'
+// ];
 
 const DisableActiveClassList = [
     'not-show-active',
@@ -31,10 +31,10 @@ enum LElementActiveType {
 }
 
 export class LElementStateManager {
-    private readonly ele: Element;
+    private readonly ele: Element|null;
     private readonly canActive:Boolean;
     private readonly activeType:LElementActiveType;
-    private readonly activeClassName = '';
+    private readonly activeClassName:string;
 
     constructor(touchEle: Element) {
         let {ele, canActive, activeType} = this.findActiveElement(touchEle);
@@ -43,7 +43,7 @@ export class LElementStateManager {
         this.activeType = activeType;
         this.activeClassName = this.getActiveClassName();
     }
-    private findActiveElement(ele: Element): {} {
+    private findActiveElement(ele: Element|null): {ele:Element|null,canActive:boolean,activeType:LElementActiveType} {
         if (!ele) {
             return {
                 ele: null,
@@ -108,7 +108,7 @@ export class LElementStateManager {
         return this.findActiveElement(ele.parentElement);
     }
     private getActiveClassName():string{
-        let activeClassName: string;
+        let activeClassName = '';
         switch (this.activeType) {
             case LElementActiveType.All:{
                 activeClassName = createCssNamespace('active-state')
