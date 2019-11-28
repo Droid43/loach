@@ -13,9 +13,11 @@
     "url": "git+https://github.com/Droid43/loach.git"
   },
   "keywords": [
+    "loach",
     "vue",
     "mobile",
-    "ui"
+    "ui",
+    "hybird"
   ],
   "author": "Droid43",
   "license": "MIT",
@@ -29,6 +31,7 @@
     "@babel/plugin-proposal-decorators": "^7.6.0",
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-typescript": "^7.6.0",
+    "@types/node": "^12.12.14",
     "autoprefixer": "^9.6.5",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.0",

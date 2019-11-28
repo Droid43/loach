@@ -5,6 +5,10 @@
       "dom",
       "es2015"
     ],
+    "typeRoots": [
+      "./node_modules/vue/types",
+      "node_modules/@types/node"
+    ],
     "module": "es2015",
     "moduleResolution": "node",
     "outDir": "lib",
@@ -17,7 +21,10 @@
     "suppressImplicitAnyIndexErrors": true
   },
   "include": [
-    "./src/**/*.ts"
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "example/**/*.ts",
+    "example/**/*.vue"
   ],
   "compileOnSave": false
 }
