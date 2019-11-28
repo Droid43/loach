@@ -18,11 +18,13 @@ export default Vue.component('l-page', {
     },
     methods: {},
     computed: {},
-    // `createElement` 是可推导的，但是 `render` 需要返回值类型
     render(createElement): VNode {
-        const {
+        let {
             title, hiddenLeft
         } = this.$props;
+        if(!(window.$LApp && window.$LApp.canPopPage())){
+            hiddenLeft = true;
+        }
         return createElement('div', {
             class: {
                 'loach-page': true,

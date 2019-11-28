@@ -52,20 +52,22 @@ function createIndexFile(){
 			}
 		});
 	let fileContent = `import { VueConstructor } from 'vue/types';\n${
-		"import {LApp} from '../utils/LApp';\n"
+		"import {LApp} from '../utils/LApp';\n" +
+		"import {setup as Setup} from '../utils/Setup';\n"
 		}${importComponents
 		}\nconst components = {\n${componentStr
 	}};\nconst install = (Vue: VueConstructor) => {
-  Object.keys(components).forEach(key => {
-    Vue.component('L' + key,components[key]);
-  });
+\tSetup(Vue);
+\tObject.keys(components).forEach(key => {
+\t\tVue.component('L' + key,components[key]);
+\t});
 };
 export default {
 ${componentStr}\tinstall,\n\tLApp
 };`;
 
 	// console.log(fileContent);
-	fs.writeFileSync(path.join(ComponentRootDir, '/index.ts'), fileContent);
+	fs.writeFileSync(path.join(ComponentRootDir, '/index.js'), fileContent);
 	fs.writeFileSync(path.join(ComponentRootDir, '/index.less'), styleContent);
 }
 

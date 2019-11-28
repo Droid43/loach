@@ -56,7 +56,7 @@
 				console.log(item.name, this.itemList.indexOf(item) % 2 === 0);
 				LApp.getInstance().pushPage({
 					name: item.name,
-					transType: Math.round(Math.random() * 2) % 2 === 0 ? LAppRouteTransType.Line : LAppRouteTransType.Modal
+					transType: this.itemList.indexOf(item) % 2 === 1 ? LAppRouteTransType.Line : LAppRouteTransType.Modal
 				});
 			}
 		},

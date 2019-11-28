@@ -14,7 +14,6 @@ export default Vue.component(createNamespace('nav-bar-left'), {
         }
     },
     computed: {},
-    // `createElement` 是可推导的，但是 `render` 需要返回值类型
     render(createElement): VNode {
         let self = this;
         const {

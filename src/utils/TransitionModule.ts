@@ -1,6 +1,7 @@
 import {VNode} from 'vue';
 import {createCssNamespace} from './NameSpace'
 import Tools from './Tools'
+import {Vue} from "vue/types/vue";
 
 const ActiveNoneClassList = [
     'need-click'
@@ -171,6 +172,68 @@ export const LPageTransitionManager = {
             ele.addEventListener("transitionend", animationEndCallback);
         }
         transitionSetter();
+    }
+};
+
+/**
+ * route hook to fix v
+ */
+export const LRouterHook = {
+    fixOldPagePatch(app:VNode|undefined, oldPage:VNode|undefined){
+        if(!(app && app.context && oldPage)) return;
+        // @ts-ignore
+        let appOldNode = <VNode>(app.context._vnode);
+        let oldChildren = appOldNode.children || [];
+        if(oldChildren.indexOf(oldPage) >= 0) return;
+        if(!appOldNode.children) appOldNode.children = [];
+        let copyPage = <VNode>{};
+        Object.assign(copyPage, oldPage);
+        let appEl = app.context.$el;
+        if(copyPage.elm && (!copyPage.elm.parentNode)){
+            oldChildren.unshift(copyPage);
+            appEl.insertBefore(copyPage.elm, appEl.children[0]);
+        }
+    },
+    activePage(pageInstance:Vue|undefined){
+        if(!pageInstance)return;
+        // @ts-ignore
+        pageInstance._inactive = false;
+        // @ts-ignore
+        pageInstance._directInactive = false;
+        let activatedList = pageInstance.$options['activated'];
+        // @ts-ignore
+        activatedList && activatedList.forEach(activated => {
+            activated && activated.call(pageInstance);
+        });
+        pageInstance.$children && pageInstance.$children.forEach(childInstance => {
+            this.activePage(childInstance);
+        });
+        this._freshDevTool();
+    },
+    deactivePage(pageInstance:Vue|undefined){
+        if(!pageInstance)return;
+        // @ts-ignore
+        pageInstance._inactive = true;
+        // @ts-ignore
+        pageInstance._directInactive = true;
+        let deactivatedList = pageInstance.$options['deactivated'];
+        // @ts-ignore
+        deactivatedList && deactivatedList.forEach(deactivated => {
+            deactivated && deactivated.call(pageInstance);
+        });
+        pageInstance.$children && pageInstance.$children.forEach(childInstance => {
+            this.deactivePage(childInstance);
+        });
+        this._freshDevTool();
+    },
+    _freshDevTool(){
+        if(process.env.NODE_ENV !== 'production'){
+            // @ts-ignore
+            const devtools = window.__VUE_DEVTOOLS_GLOBAL_HOOK__
+            if(devtools){
+                devtools.emit('flush');
+            }
+        }
     }
 };
 

@@ -1,9 +1,9 @@
 // @ts-ignore
 import Vue, {VNode} from 'vue';
 import {createNamespace} from '../../utils/NameSpace'
-// import LNavBarLeft from '../nav-bar-left/index.ts'
-// import LNavBarTitle from '../nav-bar-title/index.ts'
-// import LNavBarRight from '../nav-bar-right/index.ts'
+// import LNavBarLeft from '../nav-bar-left/index.js'
+// import LNavBarTitle from '../nav-bar-title/index.js'
+// import LNavBarRight from '../nav-bar-right/index.js'
 
 export default Vue.component(createNamespace('nav-bar'), {
     // components:{
@@ -34,7 +34,6 @@ export default Vue.component(createNamespace('nav-bar'), {
     },
     computed: {},
     methods: {},
-    // `createElement` 是可推导的，但是 `render` 需要返回值类型
     render(createElement): VNode {
         const {
             leftTitle, hiddenLeft, title, rightTitle

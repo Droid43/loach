@@ -29,7 +29,6 @@ export default Vue.component(createNamespace('nav-bar-title'), {
             });
         }
     },
-    // `createElement` 是可推导的，但是 `render` 需要返回值类型
     render(createElement): VNode {
         const {
             title
