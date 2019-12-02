@@ -180,7 +180,7 @@ export const LPageTransitionManager = {
  */
 export const LRouterHook = {
     fixOldPagePatch(app:VNode|undefined, oldPage:VNode|undefined){
-        if(!(app && app.context && oldPage)) return;
+        if(!(app && app.context && oldPage && oldPage.componentInstance)) return;
         // @ts-ignore
         let appOldNode = <VNode>(app.context._vnode);
         let oldChildren = appOldNode.children || [];

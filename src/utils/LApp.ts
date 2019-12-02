@@ -269,8 +269,37 @@ export class LApp implements LTouchBackEvent {
         return this.pageQueue.length > 1 || !!(this.nextPage);
     }
 
+    getPageQueue(): VNode[] {
+        return this.pageQueue.concat([]);
+    }
 
-    pushPage(routeConfig: LAppRouteConfig, animated = true) {
+    pushPages(...pageConfig:Array<LAppRouteConfig|boolean|(() => void)>){
+        let animated = true;
+        let completion: (() => void) | undefined;
+        let pushList:Array<LAppRouteConfig> = [];
+        pageConfig && pageConfig.forEach((config) => {
+            if ( typeof config === 'object' ){
+                pushList.push(config);
+            }else if(typeof config === 'boolean'){
+                animated = config;
+            }else if(typeof config === 'function'){
+                completion = config;
+            }
+        });
+        let self = this;
+        let context = this.appNode.context;
+        let finishCallBack = () => {
+            if(pushList.length === 0 || !context) return;
+            context.$nextTick(() => {
+                let config = <LAppRouteConfig>pushList.shift();
+                self.pushPage(config,
+                    pushList.length === 0 && animated,
+                    pushList.length === 0 ? completion : finishCallBack);
+            });
+        };
+        finishCallBack();
+    }
+    pushPage(routeConfig: LAppRouteConfig, animated = true, completion: (() => void) | undefined = undefined) {
         let page = this.createPageWithConfig(routeConfig, LAppPageState.Next);
         if (!page) return;
         if(page.data){
@@ -290,6 +319,9 @@ export class LApp implements LTouchBackEvent {
             LRouterHook.deactivePage(self.prevPage && self.prevPage.componentInstance);
             elm.style.setProperty('--loach-app-transform-direct', '-0.5');
             self.updateDisPlayPage();
+            if(typeof completion === 'function'){
+                completion();
+            }
         };
         self.removePageAnimationClass();
         elm.style.setProperty('--loach-app-transform-direct', '0.5');
@@ -318,7 +350,34 @@ export class LApp implements LTouchBackEvent {
         }
     }
 
-    popPage(animated = true) {
+    popPages(...args:Array<number|boolean|(() => void)>){
+        let self = this;
+        let animated = true;
+        let completion: (() => void) | undefined;
+        let popCount = 0;
+        args && args.forEach((config) => {
+            console.log(typeof config);
+            if ( typeof config === 'number' ){
+                popCount = Math.min(config, self.pageQueue.length - 1);
+            }else if(typeof config === 'boolean'){
+                animated = config;
+            }else if(typeof config === 'function'){
+                completion = config;
+            }
+        });
+        let context = self.appNode.context;
+        let finishCallBack = () => {
+            if(popCount === 0 || !context) return;
+            popCount--;
+            context.$nextTick(() => {
+                self.popPage(popCount === 0 && animated,
+                    popCount === 0 ? completion : finishCallBack);
+            });
+        };
+        finishCallBack();
+    }
+
+    popPage(animated = true, completion: (() => void) | undefined = undefined) {
         // window.history.back();
         if(!this.canPopPage()){
             return
@@ -346,6 +405,9 @@ export class LApp implements LTouchBackEvent {
                 context.$nextTick(() => {
                     self.removePageAnimationClass();
                     self.fixAllPageClass();
+                    if(typeof completion === 'function'){
+                        completion();
+                    }
                 });
             }
         };
