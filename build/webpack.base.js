@@ -1,5 +1,5 @@
-const path = require('path');
-const { VueLoaderPlugin } = require('vue-loader');
+const path = require('path')
+const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = {
   mode: 'development',
@@ -7,8 +7,8 @@ module.exports = {
     extensions: ['.js', '.ts', '.tsx', '.vue', '.less'],
     alias: {
       // vue: 'vue/dist/vue.js',
-      'src': path.resolve(__dirname, '../src'),
-      'example': path.resolve(__dirname, '../example'),
+      src: path.resolve(__dirname, '../src'),
+      example: path.resolve(__dirname, '../example')
     }
   },
   module: {
@@ -37,14 +37,14 @@ module.exports = {
             presets: [
               '@babel/preset-env',
               [
-                '@babel/preset-typescript',   // 引用Typescript插件
+                '@babel/preset-typescript', // 引用Typescript插件
                 {
-                  allExtensions: true,        // 支持所有文件扩展名
-                },
-              ],
-            ],
+                  allExtensions: true // 支持所有文件扩展名
+                }
+              ]
+            ]
           }
-        },
+        }
       },
       {
         test: /\.less$/,
@@ -64,5 +64,4 @@ module.exports = {
     ]
   },
   plugins: [new VueLoaderPlugin()]
-};
-
+}
