@@ -27,7 +27,7 @@
 
 <script>
 import LButton from '../index.ts'
-import { LAppRouteTransType } from '../../../../lib/utils/LApp'
+import { LAppRouteTransType } from '../../../../src/utils/LApp'
 
 const onceCount = 4
 export default {

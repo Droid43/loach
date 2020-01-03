@@ -1,13 +1,13 @@
-import Vue from 'vue';
+import Vue from 'vue'
 import Loach from '../../src/components'
-import App from './App.vue';
+import App from './App.vue'
 
-Vue.use(Loach);
+Vue.use(Loach)
 
-function initApp() {
-    new Vue({
-        render: h => h(App),
-    }).$mount('#app')
+function initApp () {
+  new Vue({
+    render: h => h(App)
+  }).$mount('#app')
 }
 
-initApp();
+initApp()

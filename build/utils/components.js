@@ -66,7 +66,7 @@ ${componentStr}\tinstall,\n\tLApp
 };`
 
   // console.log(fileContent);
-  fs.writeFileSync(path.join(ComponentRootDir, '/index.js'), fileContent)
+  fs.writeFileSync(path.join(ComponentRootDir, '/index.ts'), fileContent)
   fs.writeFileSync(path.join(ComponentRootDir, '/index.less'), styleContent)
 }
 

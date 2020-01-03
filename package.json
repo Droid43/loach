@@ -7,7 +7,7 @@
     "dev": "npm run build:components && npm run build:routes && webpack-dev-server --config build/webpack.example.js",
     "build:routes": "node build/utils/demo-routes.js",
     "build:components": "node build/utils/components.js",
-    "eslint": "eslint --fix --ext .js,.vue src/ example/"
+    "eslint": "eslint --fix --ext .ts,.vue src/ example/"
   },
   "repository": {
     "type": "git",

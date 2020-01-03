@@ -1,4 +1,4 @@
-import { VNode, VueConstructor, CreateElement } from 'vue'
+import Vue, { VNode, VueConstructor, CreateElement } from 'vue'
 import { LTouch, LTouchBackEvent } from './LTouch'
 import Tools from './Tools'
 import { LPageTransitionManager, LRouterHook } from './TransitionModule'
@@ -270,9 +270,9 @@ export class LApp implements LTouchBackEvent {
     return this.pageQueue.concat([])
   }
 
-  pushPages (...pageConfig: Array<LAppRouteConfig | boolean | (() => void)>) {
+  pushPages (...pageConfig: Array<LAppRouteConfig | boolean | ((vueInstance:(Vue|undefined)) => void)>) {
     let animated = true
-    let completion: (() => void) | undefined
+    let completion: ((vueInstance:(Vue|undefined)) => void) | undefined
     const pushList: Array<LAppRouteConfig> = []
     pageConfig && pageConfig.forEach((config) => {
       if (typeof config === 'object') {
@@ -297,7 +297,9 @@ export class LApp implements LTouchBackEvent {
     finishCallBack()
   }
 
-  pushPage (routeConfig: LAppRouteConfig, animated = true, completion: (() => void) | undefined = undefined) {
+  pushPage (routeConfig: LAppRouteConfig,
+    animated = true,
+    completion: ((vueInstance:(Vue|undefined)) => void) | undefined = undefined) {
     const page = this.createPageWithConfig(routeConfig, LAppPageState.Next)
     if (!page) return
     if (page.data) {
@@ -308,9 +310,9 @@ export class LApp implements LTouchBackEvent {
     this.updateDisPlayPage()
     const self = this
     const elm: HTMLElement = <any>(this.appNode.elm)
+    self.pageQueue.push(page)
     const pagePushHander = () => {
       // @ts-ignore
-      self.pageQueue.push(page)
       self.prevPage = self.currentPage
       self.currentPage = page
       self.nextPage = undefined
@@ -318,7 +320,7 @@ export class LApp implements LTouchBackEvent {
       elm.style.setProperty('--loach-app-transform-direct', '-0.5')
       self.updateDisPlayPage()
       if (typeof completion === 'function') {
-        completion()
+        completion(self.currentPage && self.currentPage.componentInstance)
       }
     }
     self.removePageAnimationClass()
@@ -348,10 +350,10 @@ export class LApp implements LTouchBackEvent {
     }
   }
 
-  popPages (...args: Array<number | boolean | (() => void)>) {
+  popPages (...args: Array<number | boolean | ((vueInstance:(Vue|undefined)) => void)>) {
     const self = this
     let animated = true
-    let completion: (() => void) | undefined
+    let completion: ((vueInstance:(Vue|undefined)) => void) | undefined
     let popCount = 0
     args && args.forEach((config) => {
       console.log(typeof config)
@@ -375,7 +377,7 @@ export class LApp implements LTouchBackEvent {
     finishCallBack()
   }
 
-  popPage (animated = true, completion: (() => void) | undefined = undefined) {
+  popPage (animated = true, completion: ((vueInstance:(Vue|undefined)) => void) | undefined = undefined) {
     // window.history.back();
     if (!this.canPopPage()) {
       return
@@ -404,7 +406,7 @@ export class LApp implements LTouchBackEvent {
           self.removePageAnimationClass()
           self.fixAllPageClass()
           if (typeof completion === 'function') {
-            completion()
+            completion(self.currentPage && self.currentPage.componentInstance)
           }
         })
       }

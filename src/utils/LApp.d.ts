@@ -1,4 +1,4 @@
-import { LApp, LAppRouteConfig, LAppRouteTransType } from './LApp';
+import { LApp, LAppRouteConfig, LAppRouteTransType } from './LApp'
 
 export default LApp
 export {
